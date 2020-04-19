@@ -28,11 +28,23 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/member/*': {
-        target: 'http://127.0.0.1:7777'  // 请求本地 需要xmall后台项目 默认127.0.0.1:7777 
+      '/user/*': {
+        target: 'http://127.0.0.1:8080/gateway'  // 请求本地 需要xmall后台项目 默认127.0.0.1:7777
       },
-      '/goods/*': {
-        target: 'http://127.0.0.1:7777'  // 请求本地 需要xmall后台项目 默认127.0.0.1:7777
+      '/product/*': {
+        target: 'http://127.0.0.1:8080/gateway'  // 请求本地 需要xmall后台项目 默认127.0.0.1:7777
+      },
+      '/cart/*': {
+        target: 'http://127.0.0.1:8080/gateway'  // 请求本地 需要xmall后台项目 默认127.0.0.1:7777
+      },
+      '/order/*': {
+        target: 'http://127.0.0.1:8080/gateway'  // 请求本地 需要xmall后台项目 默认127.0.0.1:7777
+      },
+      '/address/*': {
+        target: 'http://127.0.0.1:8080/gateway'  // 请求本地 需要xmall后台项目 默认127.0.0.1:7777
+      },
+      '/stock/*': {
+        target: 'http://127.0.0.1:8080/gateway'  // 请求本地 需要xmall后台项目 默认127.0.0.1:7777
       }
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"

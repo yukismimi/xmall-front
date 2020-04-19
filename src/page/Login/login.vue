@@ -56,9 +56,12 @@
 <script>
 import YFooter from '/common/footer'
 import YButton from '/components/YButton'
-import { userLogin, geetest } from '/api/index.js'
+import { userLogin, userInfo } from '/api/index.js'
+// import { userLogin, geetest } from '/api/index.js'
 import { addCart } from '/api/goods.js'
 import { setStore, getStore, removeStore } from '/utils/storage.js'
+import { mapState, mapMutations } from 'vuex'
+// import {userInfo} from '../../api'
 require('../../../static/geetest/gt.js')
 var captcha
 export default {
@@ -83,11 +86,15 @@ export default {
     }
   },
   computed: {
+    ...mapState(['userInfo']),
     count () {
       return this.$store.state.login
     }
   },
   methods: {
+    ...mapMutations([
+      'RECORD_USERINFO'
+    ]),
     open (t, m) {
       this.$notify.info({
         title: t,
@@ -142,7 +149,7 @@ export default {
           cartArr.push({
             userId: getStore('userId'),
             productId: item.productId,
-            productNum: item.productNum
+            quantity: item.quantity
           })
         })
       }
@@ -156,29 +163,39 @@ export default {
         this.message('账号或者密码不能为空!')
         return false
       }
-      var result = captcha.getValidate()
-      if (!result) {
-        this.message('请完成验证')
-        this.logintxt = '登录'
-        return false
-      }
+      // captcha验证码删除
+      // var result = captcha.getValidate()
+      // if (!result) {
+      //   this.message('请完成验证')
+      //   this.logintxt = '登录'
+      //   return false
+      // }
       var params = {
-        userName: this.ruleForm.userName,
-        userPwd: this.ruleForm.userPwd,
-        challenge: result.geetest_challenge,
-        validate: result.geetest_validate,
-        seccode: result.geetest_seccode,
-        statusKey: this.statusKey
+        username: this.ruleForm.userName,
+        password: this.ruleForm.userPwd
+        // captcha验证码删除
+        // challenge: result.geetest_challenge,
+        // validate: result.geetest_validate,
+        // seccode: result.geetest_seccode,
+        // statusKey: this.statusKey
       }
       userLogin(params).then(res => {
-        if (res.result.state === 1) {
-          setStore('token', res.result.token)
-          setStore('userId', res.result.id)
+        if (res.code === 200) {
+          setStore('token', res.data)
+
+          userInfo({username: params.username}).then(res => {
+            if (res.code === 200) {
+              // state.login = true
+              // setStore('userInfo', res.data)
+              this.RECORD_USERINFO(res.data)
+            }
+          })
+          // setStore('userId', res.result.id)
           // 登录后添加当前缓存中的购物车
           if (this.cart.length) {
             for (var i = 0; i < this.cart.length; i++) {
               addCart(this.cart[i]).then(res => {
-                if (res.success === true) {
+                if (res.code === 200) {
                 }
               })
             }
@@ -198,26 +215,26 @@ export default {
           return false
         }
       })
-    },
-    init_geetest () {
-      geetest().then(res => {
-        this.statusKey = res.statusKey
-        window.initGeetest({
-          gt: res.gt,
-          challenge: res.challenge,
-          new_captcha: res.new_captcha,
-          offline: !res.success,
-          product: 'popup',
-          width: '100%'
-        }, function (captchaObj) {
-          captcha = captchaObj
-          captchaObj.appendTo('#captcha')
-          captchaObj.onReady(function () {
-            document.getElementById('wait').style.display = 'none'
-          })
-        })
-      })
     }
+    // init_geetest () {
+    //   geetest().then(res => {
+    //     this.statusKey = res.statusKey
+    //     window.initGeetest({
+    //       gt: res.gt,
+    //       challenge: res.challenge,
+    //       new_captcha: res.new_captcha,
+    //       offline: !res.success,
+    //       product: 'popup',
+    //       width: '100%'
+    //     }, function (captchaObj) {
+    //       captcha = captchaObj
+    //       captchaObj.appendTo('#captcha')
+    //       captchaObj.onReady(function () {
+    //         document.getElementById('wait').style.display = 'none'
+    //       })
+    //     })
+    //   })
+    // }
   },
   mounted () {
     this.getRemembered()

@@ -18,7 +18,7 @@ export default {
     }
   },
   // 加入购物车
-  [ADD_CART] (state, {productId, salePrice, productName, productImg, productNum = 1}) {
+  [ADD_CART] (state, {productId, salePrice, productName, productImg, quantity = 1}) {
     let cart = state.cartList // 购物车
     let falg = true
     let goods = {
@@ -30,15 +30,15 @@ export default {
     if (cart.length) {        // 有内容
       cart.forEach(item => {
         if (item.productId === productId) {
-          if (item.productNum >= 0) {
+          if (item.quantity >= 0) {
             falg = false
-            item.productNum += productNum
+            item.quantity += quantity
           }
         }
       })
     }
     if (!cart.length || falg) {
-      goods.productNum = productNum
+      goods.quantity = quantity
       goods.checked = '1'
       cart.push(goods)
     }
@@ -76,8 +76,8 @@ export default {
     let cart = state.cartList
     cart.forEach((item, i) => {
       if (item.productId === productId) {
-        if (item.productNum > 1) {
-          item.productNum--
+        if (item.quantity > 1) {
+          item.quantity--
         } else {
           cart.splice(i, 1)
         }
@@ -88,12 +88,12 @@ export default {
     setStore('buyCart', state.cartList)
   },
   // 修改购物车
-  [EDIT_CART] (state, {productId, productNum, checked}) {
+  [EDIT_CART] (state, {productId, quantity, checked}) {
     let cart = state.cartList
-    if (productNum) {
+    if (quantity) {
       cart.forEach((item, i) => {
         if (item.productId === productId) {
-          item.productNum = productNum
+          item.quantity = quantity
           item.checked = checked
         }
       })
@@ -114,8 +114,10 @@ export default {
   },
   // 记录用户信息
   [RECORD_USERINFO] (state, info) {
+    console.log('record userinfo')
     state.userInfo = info
     state.login = true
+    console.log(state)
     setStore('userInfo', info)
   },
   // 获取用户信息

@@ -3,24 +3,25 @@
     <y-shelf title="支付订单">
       <div slot="content">
         <div class="box-inner order-info">
-          <h3>提交订单成功，请填写捐赠信息</h3>
+<!--          <h3>提交订单成功，请填写捐赠信息</h3>-->
+          <h3>提交订单成功，请选择支付方式</h3>
           <p class="payment-detail">请在 <span>24 小时内</span>完成支付，超时订单将自动取消。</p>
-          <p class="payment-detail">我们不会在您完成支付后的 72 小时内发货，您的支付将用作捐赠</p>
-          <p class="payment-detail" style="color:red">请仔细填写捐赠信息，避免系统审核失败无法在捐赠名单中显示您的数据</p>
+          <p class="payment-detail" style="color:red">我们不会在您完成支付后的 72 小时内发货，您的支付将用作测试</p>
+<!--          <p class="payment-detail" style="color:red">请仔细填写捐赠信息，避免系统审核失败无法在捐赠名单中显示您的数据</p>-->
         </div>
-        <div class="pay-info">
-          <span style="color:red">*</span> 昵称：<el-input v-model="nickName" placeholder="请输入您的昵称" @change="checkValid" :maxlength="maxLength" class="input"></el-input><br>
-          <span style="color:red">*</span> 捐赠金额：<el-select class="money-select" v-model="moneySelect" placeholder="请选择支付金额" @change="changeSelect">
-            <el-option label="￥0.10 我是穷逼" value="0.10"></el-option>
-            <el-option label="￥1.00 支付测试" value="1.00"></el-option>
-            <el-option label="￥5.00 感谢捐赠" value="5.00"></el-option>
-            <el-option label="￥10.00 感谢大佬" value="10.00"></el-option>
-            <el-option label="自定义 随意撒币" value="custom"></el-option>
-          </el-select><br>
-          <div v-if="moneySelect === 'custom'"><span style="color:red">*</span> 输入金额：<el-input v-model="money" placeholder="请输入捐赠金额(最多2位小数，不得低于0.1元)" @change="checkValid" :maxlength="maxLength" class="input" style="margin-left:10px"></el-input><br></div>
-          <span style="color:red">*</span> 通知邮箱：<el-input v-model="email" placeholder="支付审核结果将以邮件方式发送至您的邮箱" @change="checkValid" :maxlength="maxLength" class="input" style="margin-left:10px"></el-input><br>
-          &nbsp;&nbsp; 留言：<el-input v-model="info" placeholder="请输入您的留言内容" :maxlength="maxLength" class="input"></el-input>
-        </div>
+<!--        <div class="pay-info">-->
+<!--          <span style="color:red">*</span> 昵称：<el-input v-model="nickName" placeholder="请输入您的昵称" @change="checkValid" :maxlength="maxLength" class="input"></el-input><br>-->
+<!--          <span style="color:red">*</span> 捐赠金额：<el-select class="money-select" v-model="moneySelect" placeholder="请选择支付金额" @change="changeSelect">-->
+<!--            <el-option label="￥0.10 我是穷逼" value="0.10"></el-option>-->
+<!--            <el-option label="￥1.00 支付测试" value="1.00"></el-option>-->
+<!--            <el-option label="￥5.00 感谢捐赠" value="5.00"></el-option>-->
+<!--            <el-option label="￥10.00 感谢大佬" value="10.00"></el-option>-->
+<!--            <el-option label="自定义 随意撒币" value="custom"></el-option>-->
+<!--          </el-select><br>-->
+<!--          <div v-if="moneySelect === 'custom'"><span style="color:red">*</span> 输入金额：<el-input v-model="money" placeholder="请输入捐赠金额(最多2位小数，不得低于0.1元)" @change="checkValid" :maxlength="maxLength" class="input" style="margin-left:10px"></el-input><br></div>-->
+<!--          <span style="color:red">*</span> 通知邮箱：<el-input v-model="email" placeholder="支付审核结果将以邮件方式发送至您的邮箱" @change="checkValid" :maxlength="maxLength" class="input" style="margin-left:10px"></el-input><br>-->
+<!--          &nbsp;&nbsp; 留言：<el-input v-model="info" placeholder="请输入您的留言内容" :maxlength="maxLength" class="input"></el-input>-->
+<!--        </div>-->
         <!--支付方式-->
         <div class="pay-type">
           <div class="p-title">支付方式</div>
@@ -78,10 +79,10 @@
           </div>
         </div>
         <div class="n-b">
-          <div class="price">¥ {{item.salePrice}}</div>
-          <div class="goods-num">{{item.productNum}}</div>
+          <div class="price">¥ {{item.productPrice}}</div>
+          <div class="goods-num">{{item.productQuantity}}</div>
           <div class="subtotal">
-            <div class="subtotal-cell"> ¥ {{item.salePrice * item.productNum}}<br></div>
+            <div class="subtotal-cell"> ¥ {{item.productPrice * item.productQuantity}}<br></div>
           </div>
         </div>
       </div>
@@ -115,7 +116,8 @@
         tel: '',
         streetName: '',
         payNow: '立刻支付',
-        submit: false,
+        // submit: false,
+        submit: true,
         nickName: '',
         money: '1.00',
         info: '',
@@ -133,7 +135,7 @@
         let totalPrice = 0
         this.cartList && this.cartList.forEach(item => {
           if (item.checked === '1') {
-            totalPrice += (item.productNum * item.salePrice)
+            totalPrice += (item.quantity * item.salePrice)
           }
         })
         return totalPrice
@@ -141,11 +143,11 @@
     },
     methods: {
       checkValid () {
-        if (this.nickName !== '' && this.money !== '' && this.isMoney(this.money) && this.email !== '' && this.isEmail(this.email)) {
-          this.submit = true
-        } else {
-          this.submit = false
-        }
+        // if (this.nickName !== '' && this.money !== '' && this.isMoney(this.money) && this.email !== '' && this.isEmail(this.email)) {
+        //   this.submit = true
+        // } else {
+        //   this.submit = false
+        // }
       },
       messageFail (m) {
         this.$message.error({
@@ -166,16 +168,19 @@
       },
       _getOrderDet (orderId) {
         let params = {
-          params: {
-            orderId: this.orderId
-          }
+          orderId: this.orderId
         }
         getOrderDet(params).then(res => {
-          this.cartList = res.result.goodsList
-          this.userName = res.result.addressInfo.userName
-          this.tel = res.result.addressInfo.tel
-          this.streetName = res.result.addressInfo.streetName
-          this.orderTotal = res.result.orderTotal
+          // this.cartList = res.result.goodsList
+          // this.userName = res.result.addressInfo.userName
+          // this.tel = res.result.addressInfo.tel
+          // this.streetName = res.result.addressInfo.streetName
+          // this.orderTotal = res.result.orderTotal
+          this.cartList = res.data.orderItemList
+          this.userName = res.data.receiverName
+          this.tel = res.data.receiverPhone
+          this.streetName = res.data.receiverProvince + ' ' + res.data.receiverCity + ' ' + res.data.receiverRegion + ' ' + res.data.receiverDetailAddress
+          this.orderTotal = res.data.totalAmount
         })
       },
       paySuc () {
@@ -243,7 +248,7 @@
     },
     created () {
       this.userId = getStore('userId')
-      this.orderId = this.$route.query.orderId
+      this.orderId = this.$route.query.id
       if (this.orderId) {
         this._getOrderDet(this.orderId)
       } else {

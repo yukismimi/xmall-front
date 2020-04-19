@@ -9,13 +9,13 @@
         </div>
         <div v-if="addList.length">
           <div class="address-item" v-for="(item,i) in addList" :key="i">
-            <div class="name">{{item.userName}}</div>
-            <div class="address-msg">{{item.streetName}}</div>
-            <div class="telephone">{{item.tel}}</div>
+            <div class="name">{{item.name}}</div>
+            <div class="address-msg">{{item.province + ' ' + item.city + ' ' + item.region + ' ' + item.detailAddress}}</div>
+            <div class="telephone">{{item.phoneNumber}}</div>
             <div class="defalut">
               <a @click="changeDef(item)"
                  href="javascript:;"
-                 v-text="item.isDefault?'( 默认地址 )':'设为默认'"
+                 v-text="item.defaultStatus === 1 ?'( 默认地址 )':'设为默认'"
                  :class="{'defalut-address':item.isDefault}"></a>
             </div>
             <div class="operation">
@@ -92,11 +92,11 @@
         })
       },
       _addressList () {
-        addressList({userId: this.userId}).then(res => {
-          let data = res.result
+        addressList().then(res => {
+          let data = res.data
           if (data.length) {
-            this.addList = res.result
-            this.addressId = res.result[0].addressId || '1'
+            this.addList = res.data
+            this.addressId = res.data[0].id || '1'
           } else {
             this.addList = []
           }
@@ -196,10 +196,10 @@
       color: #838383;
     }
     .address {
-      margin-left: 115px; 
+      margin-left: 115px;
     }
     .tel {
-      margin-left: 195px; 
+      margin-left: 195px;
     }
   }
 

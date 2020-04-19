@@ -7,8 +7,8 @@
             <div class="gray-sub-title cart-title">
               <div class="first">
                 <div>
-                  <span class="date" v-text="item.createDate"></span>
-                  <span class="order-id"> 订单号： <a @click="orderDetail(item.orderId)">{{item.orderId}}</a> </span>
+                  <span class="date" v-text="item.createTime"></span>
+                  <span class="order-id"> 订单号： <a @click="orderDetail(item.id)">{{item.id}}</a> </span>
                 </div>
                 <div class="f-bc">
                   <span class="price">单价</span>
@@ -18,22 +18,22 @@
               </div>
               <div class="last">
                 <span class="sub-total">实付金额</span>
-                <span class="order-detail"> <a @click="orderDetail(item.orderId)">查看详情 ><em class="icon-font"></em></a> </span>
+                <span class="order-detail"> <a @click="orderDetail(item.id)">查看详情 ><em class="icon-font"></em></a> </span>
               </div>
             </div>
             <div class="pr">
-              <div class="cart" v-for="(good,j) in item.goodsList" :key="j">
+              <div class="cart" v-for="(orderItem,j) in item.orderItemList" :key="j">
                 <div class="cart-l" :class="{bt:j>0}">
                   <div class="car-l-l">
-                    <div class="img-box"><a @click="goodsDetails(good.productId)"><img :src="good.productImg" alt=""></a></div>
-                    <div class="ellipsis"><a style="color: #626262;" @click="goodsDetails(good.productId)">{{good.productName}}</a></div>
+                    <div class="img-box"><a @click="goodsDetails(orderItem.productId)"><img :src="orderItem.productPic" alt=""></a></div>
+                    <div class="ellipsis"><a style="color: #626262;" @click="goodsDetails(orderItem.productId)">{{orderItem.productName}}</a></div>
                   </div>
                   <div class="cart-l-r">
-                    <div>¥ {{Number(good.salePrice).toFixed(2)}}</div>
-                    <div class="num">{{good.productNum}}</div>
+                    <div>¥ {{Number(orderItem.realAmount).toFixed(2)}}</div>
+                    <div class="num">{{orderItem.productQuantity}}</div>
                     <div class="type">
-                      <el-button style="margin-left:20px" @click="_delOrder(item.orderId,i)" type="danger" size="small" v-if="j<1" class="del-order">删除此订单</el-button>
-                      <!-- <a @click="_delOrder(item.orderId,i)" href="javascript:;" v-if="j<1" class="del-order">删除此订单</a> -->
+                      <el-button style="margin-left:20px" @click="_delOrder(item.id,i)" type="danger" size="small" v-if="j<1" class="del-order">删除此订单</el-button>
+                      <!-- <a @click="_delOrder(item.id,i)" href="javascript:;" v-if="j<1" class="del-order">删除此订单</a> -->
                     </div>
                   </div>
                 </div>
@@ -43,11 +43,11 @@
                 </div>
               </div>
               <div class="prod-operation pa" style="right: 0;top: 0;">
-                <div class="total">¥ {{item.orderTotal}}</div>
-                <div v-if="item.orderStatus === '0'">
-                  <el-button @click="orderPayment(item.orderId)" type="primary" size="small">现在付款</el-button>
+                <div class="total">¥ {{item.totalAmount}}</div>
+                <div v-if="item.status === 0">
+                  <el-button @click="orderPayment(item.id)" type="primary" size="small">现在付款</el-button>
                 </div>
-                <div class="status" v-if="item.orderStatus !== '0'"> {{getOrderStatus(item.orderStatus)}}  </div>
+                <div class="status" v-if="item.status !== 0"> {{getOrderStatus(item.status)}}  </div>
               </div>
             </div>
           </div>
@@ -75,7 +75,7 @@
 <script>
   import { orderList, delOrder } from '/api/goods'
   import YShelf from '/components/shelf'
-  import { getStore } from '/utils/storage'
+  // import { getStore } from '/utils/storage'
   export default {
     data () {
       return {
@@ -102,27 +102,27 @@
         this.currentPage = val
         this._orderList()
       },
-      orderPayment (orderId) {
-        window.open(window.location.origin + '#/order/payment?orderId=' + orderId)
+      orderPayment (id) {
+        window.open(window.location.origin + '#/order/payment?id=' + id)
       },
       goodsDetails (id) {
-        window.open(window.location.origin + '#/goodsDetails?productId=' + id)
+        window.open(window.location.origin + '#/goodsDetails?id=' + id)
       },
-      orderDetail (orderId) {
+      orderDetail (id) {
         this.$router.push({
           path: 'orderDetail',
           query: {
-            orderId: orderId
+            id: id
           }
         })
       },
       getOrderStatus (status) {
         if (status === '1') {
-          return '支付审核中'
+          return '待付款'
         } else if (status === '2') {
           return '待发货'
         } else if (status === '3') {
-          return '待收货'
+          return '已发货'
         } else if (status === '4') {
           return '交易成功'
         } else if (status === '5') {
@@ -132,23 +132,24 @@
         }
       },
       _orderList () {
-        let params = {
-          params: {
-            userId: this.userId,
-            size: this.pageSize,
-            page: this.currentPage
-          }
-        }
-        orderList(params).then(res => {
-          this.orderList = res.result.data
-          this.total = res.result.total
+        // let params = {
+        //   // params: {
+        //   //   userId: this.userId,
+        //   //   size: this.pageSize,
+        //   //   page: this.currentPage
+        //   // }
+        // }
+        console.log('test')
+        orderList().then(res => {
+          this.orderList = res.data
+          this.total = res.data.length
           this.loading = false
         })
       },
-      _delOrder (orderId, i) {
+      _delOrder (id, i) {
         let params = {
           params: {
-            orderId: orderId
+            id: id
           }
         }
         delOrder(params).then(res => {
@@ -161,7 +162,8 @@
       }
     },
     created () {
-      this.userId = getStore('userId')
+      // this.userId = getStore('userId')
+      console.log('what happened?')
       this._orderList()
     },
     components: {

@@ -8,8 +8,10 @@
         <div class="account-sidebar">
           <div class="avatar gray-box ">
             <div>
-              <img :src="userInfo.info.file"> <h5>
-              {{userInfo.info.username}}</h5></div>
+<!--              <img :src="userInfo.avatar"> <h5>-->
+<!--              {{userInfo.username}}</h5></div>-->
+              <img :src="store.avatar"> <h5>
+              {{store.username}}</h5></div>
             <div class="box-inner">
               <ul class="account-nav">
                 <li v-for="(item,i) in nav" :key='i' :class="{current:item.name===title}"
@@ -33,6 +35,8 @@
   import YFooter from '/common/footer'
   import YHeader from '/common/header'
   import { mapState } from 'vuex'
+  import {getStore} from '../../utils/storage'
+  // import {userInfo} from "../../api";
   export default {
     data () {
       return {
@@ -49,7 +53,10 @@
       }
     },
     computed: {
-      ...mapState(['userInfo'])
+      ...mapState(['userInfo']),
+      store () {
+        return JSON.parse(getStore('userInfo') || '{}')
+      }
     },
     methods: {
       tab (e) {

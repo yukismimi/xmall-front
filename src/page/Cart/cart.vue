@@ -28,7 +28,7 @@
                       <!--图片-->
                       <div class="items-thumb fl">
                         <img :alt="item.productName"
-                             :src="item.productImg">
+                             :src="item.productPic">
                         <a @click="goodsDetails(item.productId)" :title="item.productName" target="_blank"></a>
                       </div>
                       <!--信息-->
@@ -43,14 +43,14 @@
                       </div>
                       <!--删除按钮-->
                       <div class="operation">
-                        <a class="items-delete-btn" @click="cartdel(item.productId)"></a>
+                        <a class="items-delete-btn" @click="cartdel(item.id)"></a>
                       </div>
                       <!--商品数量-->
                       <div>
                         <!--总价格-->
-                        <div class="subtotal" style="font-size: 14px">¥ {{item.salePrice * item.productNum}}</div>
+                        <div class="subtotal" style="font-size: 14px">¥ {{item.price * item.quantity}}</div>
                         <!--数量-->
-                        <buy-num :num="item.productNum"
+                        <buy-num :num="item.quantity"
                                  :id="item.productId"
                                  :checked="item.checked"
                                  style="height: 140px;
@@ -62,7 +62,7 @@
                         >
                         </buy-num>
                         <!--价格-->
-                        <div class="price1">¥ {{item.salePrice}}</div>
+                        <div class="price1">¥ {{item.price}}</div>
                       </div>
                     </div>
                   </div>
@@ -152,7 +152,7 @@
       totalNum () {
         var totalNum = 0
         this.cartList && this.cartList.forEach(item => {
-          totalNum += (item.productNum)
+          totalNum += (item.quantity)
         })
         return Number(totalNum)
       },
@@ -161,7 +161,7 @@
         var totalPrice = 0
         this.cartList && this.cartList.forEach(item => {
           if (item.checked === '1') {
-            totalPrice += (item.productNum * item.salePrice)
+            totalPrice += (item.quantity * item.salePrice)
           }
         })
         return totalPrice
@@ -171,7 +171,7 @@
         var checkNum = 0
         this.cartList && this.cartList.forEach(item => {
           if (item.checked === '1') {
-            checkNum += (item.productNum)
+            checkNum += (item.quantity)
           }
         })
         return checkNum
@@ -197,12 +197,12 @@
         })
       },
       // 修改购物车
-      _cartEdit (userId, productId, productNum, checked) {
+      _cartEdit (userId, productId, quantity, checked) {
         cartEdit(
           {
             userId,
             productId,
-            productNum,
+            quantity,
             checked
           }
         ).then(res => {
@@ -211,7 +211,7 @@
               {
                 productId,
                 checked,
-                productNum
+                quantity
               }
             )
           }
@@ -222,18 +222,18 @@
         if (type && item) {
           let checked = item.checked
           let productId = item.productId
-          let productNum = item.productNum
+          let quantity = item.quantity
           // 勾选
           if (type === 'check') {
             let newChecked = checked === '1' ? '0' : '1'
-            this._cartEdit(this.userId, productId, productNum, newChecked)
+            this._cartEdit(this.userId, productId, quantity, newChecked)
           }
         } else {
           console.log('缺少所需参数')
         }
       },
-      EditNum (productNum, productId, checked) { // 数量
-        this._cartEdit(this.userId, productId, productNum, checked)
+      EditNum (quantity, productId, checked) { // 数量
+        this._cartEdit(this.userId, productId, quantity, checked)
       },
       // 删除整条购物车
       cartdel (productId) {

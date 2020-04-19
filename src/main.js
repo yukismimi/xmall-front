@@ -5,7 +5,7 @@ import store from './store/'
 import VueLazyload from 'vue-lazyload'
 import infiniteScroll from 'vue-infinite-scroll'
 import VueCookie from 'vue-cookie'
-import { userInfo } from './api'
+// import { userInfo } from './api'
 import { Button, Pagination, Checkbox, Icon, Autocomplete, Loading, Message, Notification, Steps, Step, Table, TableColumn, Input, Dialog, Select, Option } from 'element-ui'
 import { getStore } from '/utils/storage'
 import VueContentPlaceholders from 'vue-content-placeholders'
@@ -38,26 +38,40 @@ Vue.use(VueLazyload, {
 Vue.config.productionTip = false
 const whiteList = ['/home', '/goods', '/login', '/register', '/goodsDetails', '/thanks', '/search', '/refreshsearch', '/refreshgoods'] // 不需要登陆的页面
 router.beforeEach(function (to, from, next) {
-  let params = {
-    params: {
-      token: getStore('token')
+  let token = getStore('token')
+  if (token !== null) {
+    console.log('token !== null')
+    next()
+  } else {
+    if (whiteList.indexOf(to.path) !== -1) { // 白名单
+      console.log('white list')
+      next()
+    } else {
+      console.log('token === null')
+      next('/login')
     }
   }
-  userInfo(params).then(res => {
-    if (res.result.state !== 1) { // 没登录
-      if (whiteList.indexOf(to.path) !== -1) { // 白名单
-        next()
-      } else {
-        next('/login')
-      }
-    } else {
-      store.commit('RECORD_USERINFO', {info: res.result})
-      if (to.path === '/login') { //  跳转到
-        next({path: '/'})
-      }
-      next()
-    }
-  })
+  // let params = {
+  //   params: {
+  //     token: getStore('token')
+  //   }
+  // }
+    // userInfo(params).then(res => {
+  //   if (res.result.state !== 1) { // 没登录
+  //     if (whiteList.indexOf(to.path) !== -1) { // 白名单
+  //       next()
+  //     } else {
+  //       next('/login')
+  //     }
+  //   } else {
+  //     store.commit('RECORD_USERINFO', {info: res.result})
+  //     if (to.path === '/login') { //  跳转到
+  //       next({path: '/'})
+  //     }
+  //     next()
+  //   }
+  // })
+  // next() //wwk添加
 })
 /* eslint-disable no-new */
 new Vue({

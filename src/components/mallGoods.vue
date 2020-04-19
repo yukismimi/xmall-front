@@ -2,24 +2,24 @@
   <div class="good-item">
     <div style="">
       <div class="good-img">
-        <a @click="openProduct(msg.productId)">
-          <img v-lazy="msg.productImageBig" :alt="msg.productName" :key="msg.productImageBig">
+        <a @click="openProduct(msg.id)">
+          <img v-lazy="msg.pic" :alt="msg.name" :key="msg.pic">
         </a>
       </div>
-      <h6 class="good-title" v-html="msg.productName">{{msg.productName}}</h6>
+      <h6 class="good-title" v-html="msg.name">{{msg.name}}</h6>
       <h3 class="sub-title ellipsis">{{msg.subTitle}}</h3>
       <div class="good-price pr">
         <div class="ds pa">
-          <a @click="openProduct(msg.productId)">
+          <a @click="openProduct(msg.id)">
             <y-button text="查看详情" style="margin: 0 5px"></y-button>
           </a>
           <y-button text="加入购物车"
                     style="margin: 0 5px"
-                    @btnClick="addCart(msg.productId,msg.salePrice,msg.productName,msg.productImageBig)"
+                    @btnClick="addCart(msg.id,msg.price,msg.name,msg.pic)"
                     classStyle="main-btn"
           ></y-button>
         </div>
-        <p><span style="font-size:14px">￥</span>{{Number(msg.salePrice).toFixed(2)}}</p>
+        <p><span style="font-size:14px">￥</span>{{Number(msg.price).toFixed(2)}}</p>
       </div>
     </div>
   </div>
@@ -32,7 +32,7 @@
   export default {
     props: {
       msg: {
-        salePrice: 0
+        price: 0
       }
     },
     data () {
@@ -41,20 +41,20 @@
     methods: {
       ...mapMutations(['ADD_CART', 'ADD_ANIMATION', 'SHOW_CART']),
       goodsDetails (id) {
-        this.$router.push({path: 'goodsDetails/productId=' + id})
+        this.$router.push({path: 'goodsDetails/id=' + id})
       },
       openProduct (id) {
-        window.open('//' + window.location.host + '/#/goodsDetails?productId=' + id)
+        window.open('//' + window.location.host + '/#/goodsDetails?id=' + id)
       },
       addCart (id, price, name, img) {
         if (!this.showMoveImg) {     // 动画是否在运动
           if (this.login) { // 登录了 直接存在用户名下
-            addCart({userId: getStore('userId'), productId: id, productNum: 1}).then(res => {
+            addCart({userId: getStore('userId'), id: id, quantity: 1}).then(res => {
               // 并不重新请求数据
-              this.ADD_CART({productId: id, salePrice: price, productName: name, productImg: img})
+              this.ADD_CART({id: id, price: price, name: name, productImg: img})
             })
           } else { // 未登录 vuex
-            this.ADD_CART({productId: id, salePrice: price, productName: name, productImg: img})
+            this.ADD_CART({id: id, price: price, name: name, productImg: img})
           }
           // 加入购物车动画
           var dom = event.target

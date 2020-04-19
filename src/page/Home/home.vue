@@ -1,15 +1,16 @@
 <template>
   <div class="home">
-    
+
   <div v-loading="loading" element-loading-text="加载中..." style="min-height: 35vw;" v-if="!error">
     <div class="banner" >
       <div class="bg" ref="bg"
         @mouseover="bgOver($refs.bg)" @mousemove="bgMove($refs.bg,$event)" @mouseout="bgOut($refs.bg)">
         <transition name="fade">
           <div v-for="(item, i) in banner" v-if="i===mark" :key="i" style="position:absolute" @click="linkTo(item)" @mouseover="stopTimer" @mouseout="startTimer">
-            <img v-if="item.picUrl" class="img1" :src="item.picUrl"/>
-            <img v-if="item.picUrl2"  class="img2 a" :src="item.picUrl2"/>
-            <img v-if="item.picUrl3"  class="img3 b" :src="item.picUrl3"/>
+            <img v-if="item.pic" class="img1" :src="item.pic"/>
+<!--            <img v-if="item.picUrl" class="img1" :src="item.picUrl"/>-->
+<!--            <img v-if="item.picUrl2"  class="img2 a" :src="item.picUrl2"/>-->
+<!--            <img v-if="item.picUrl3"  class="img3 b" :src="item.picUrl3"/>-->
           </div>
         </transition>
       </div>
@@ -171,11 +172,11 @@
     },
     mounted () {
       productHome().then(res => {
-        if (res.success === false) {
+        if (res.code !== 200) {
           this.error = true
           return
         }
-        let data = res.result
+        let data = res.data
         this.home = data
         this.loading = false
         for (let i = 0; i < data.length; i++) {
@@ -220,27 +221,27 @@
     opacity: 0;
   }
 
-  .page { 
-    position: absolute; 
+  .page {
+    position: absolute;
     width: 100%;
     top: 470px;
-    z-index: 30; 
+    z-index: 30;
     .dots {
       display: flex;
       flex-direction: row;
       align-items: center;
       justify-content: center;
-      .dot-active { 
-        display: inline-block; 
-        width: 15px; 
-        height: 15px; 
-        background-color: whitesmoke; 
-        border-radius: 8px; 
-        margin-right: 10px; 
-        cursor: pointer; 
+      .dot-active {
+        display: inline-block;
+        width: 15px;
+        height: 15px;
+        background-color: whitesmoke;
+        border-radius: 8px;
+        margin-right: 10px;
+        cursor: pointer;
       }
-      .dot { 
-        opacity: 0.2; 
+      .dot {
+        opacity: 0.2;
       }
     }
   }
@@ -477,7 +478,7 @@
     align-items: center;
     .imgbanner {
       width: 50%;
-      height: 430px; 
+      height: 430px;
       .cover-link {
         cursor: pointer;
         display: block;
@@ -485,7 +486,7 @@
         top: 60px;
         left: 0;
         width: 50%;
-        height: 430px; 
+        height: 430px;
         z-index: 4;
         background: url(data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEHAAEALAAAAAABAAEAAAICTAEAOw==) repeat;
       }

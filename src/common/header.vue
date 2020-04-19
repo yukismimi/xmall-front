@@ -34,15 +34,16 @@
                 <router-link to="/user">个人中心</router-link>
                 <!--用户信息显示-->
                 <div class="nav-user-wrapper pa" v-if="login">
+<!--                <div class="nav-user-wrapper pa">-->
                   <div class="nav-user-list">
                     <ul>
                       <!--头像-->
                       <li class="nav-user-avatar">
                         <div>
-                          <span class="avatar" :style="{backgroundImage:'url('+userInfo.info.file+')'}">
-                          </span>
+<!--                          <span class="avatar" :style="{backgroundImage:'url('+JSON.parse(userInfo).avatar+')'}">-->
+<!--                          </span>-->
                         </div>
-                        <p class="name">{{userInfo.info.username}}</p>
+<!--                        <p class="name">{{JSON.parse(userInfo).username}}</p>-->
                       </li>
                       <li>
                         <router-link to="/user/orderList">我的订单</router-link>
@@ -83,7 +84,7 @@
                               <div class="cart-item-inner">
                                 <a @click="openProduct(item.productId)">
                                   <div class="item-thumb">
-                                    <img :src="item.productImg">
+                                    <img :src="item.productPic">
                                   </div>
                                   <div class="item-desc">
                                     <div class="cart-cell"><h4>
@@ -91,12 +92,12 @@
                                     </h4>
                                       <!-- <p class="attrs"><span>白色</span></p> -->
                                       <h6><span class="price-icon">¥</span><span
-                                        class="price-num">{{item.salePrice}}</span><span
-                                        class="item-num">x {{item.productNum}}</span>
+                                        class="price-num">{{item.price}}</span><span
+                                        class="item-num">x {{item.quantity}}</span>
                                       </h6></div>
                                   </div>
                                 </a>
-                                <div class="del-btn del" @click="delGoods(item.productId)">删除</div>
+                                <div class="del-btn del" @click="delGoods(item.id)">删除</div>
                               </div>
                             </div>
                           </li>
@@ -182,7 +183,7 @@
       totalPrice () {
         var totalPrice = 0
         this.cartList && this.cartList.forEach(item => {
-          totalPrice += (item.productNum * item.salePrice)
+          totalPrice += (item.quantity * item.price)
         })
         return totalPrice
       },
@@ -190,7 +191,7 @@
       totalNum () {
         var totalNum = 0
         this.cartList && this.cartList.forEach(item => {
-          totalNum += (item.productNum)
+          totalNum += (item.quantity)
         })
         return totalNum
       }
@@ -300,9 +301,9 @@
       },
       // 登陆时获取一次购物车商品
       _getCartList () {
-        getCartList({userId: getStore('userId')}).then(res => {
-          if (res.success === true) {
-            setStore('buyCart', res.result)
+        getCartList().then(res => {
+          if (res.code === 200) {
+            setStore('buyCart', res.data)
           }
           // 重新初始化一次本地数据
         }).then(this.INIT_BUYCART)
@@ -382,6 +383,11 @@
       if (typeof (this.$route.query.key) !== undefined) {
         this.input = this.$route.query.key
       }
+      console.log(this.login)
+      console.log(this.userInfo)
+      console.log(this.cartList)
+      console.log(this.receiveInCart)
+      console.log(this.showCart)
     },
     components: {
       YButton

@@ -73,10 +73,10 @@
                       <!--商品数量-->
                       <div>
                         <!--总价格-->
-                        <div class="subtotal" style="font-size: 14px">¥ {{item.salePrice * item.productNum}}</div>
+                        <div class="subtotal" style="font-size: 14px">¥ {{item.salePrice * item.quantity}}</div>
                         <!--数量-->
                         <div class="item-cols-num">
-                          <span v-text="item.productNum"></span>
+                          <span v-text="item.quantity"></span>
                         </div>
                         <!--价格-->
                         <div class="price">¥ {{item.salePrice}}</div>
@@ -178,7 +178,7 @@
         let totalPrice = 0
         this.cartList && this.cartList.forEach(item => {
           if (item.checked === '1') {
-            totalPrice += (item.productNum * item.salePrice)
+            totalPrice += (item.quantity * item.salePrice)
           }
         })
         this.orderTotal = totalPrice
@@ -327,7 +327,7 @@
           let item = res.result
           item.checked = '1'
           item.productImg = item.productImageBig
-          item.productNum = this.num
+          item.quantity = this.num
           item.productPrice = item.salePrice
           this.cartList.push(item)
         })

@@ -1,35 +1,35 @@
 import http from './public'
 // 登陆
 export const userLogin = (params) => {
-  return http.fetchPost('/member/login', params)
+  return http.fetchPost('/user/login', params)
 }
 // 退出登陆
 export const loginOut = (params) => {
-  return http.fetchGet('/member/loginOut', params)
+  return http.fetchGet('/user/logout', params)
 }
 // 用户信息
 export const userInfo = (params) => {
-  return http.fetchGet('/member/checkLogin', params)
+  return http.fetchGet('/user/info', params)
 }
 // 注册账号
 export const register = (params) => {
-  return http.fetchPost('/member/register', params)
+  return http.fetchPost('/user/register', params)
 }
 // 上传图片
 export const upload = (params) => {
-  return http.fetchPost('/member/imgaeUpload', params)
+  return http.fetchPost('/user/imgaeUpload', params)
 }
 // 修改头像
 export const updateheadimage = (params) => {
-  return http.fetchPost('/member/updateheadimage', params)
+  return http.fetchPost('/user/updateheadimage', params)
 }
 // 捐赠列表
 export const thanksList = (params) => {
-  return http.fetchGet('/member/thanks', params)
+  return http.fetchGet('/user/thanks', params)
 }
 // 首页接口
 export const productHome = (params) => {
-  return http.fetchGet('/goods/home', params)
+  return http.fetchGet('/product/all', params)
 }
 // 首页接口
 export const navList = (params) => {
@@ -45,6 +45,6 @@ export const thank = (params) => {
 }
 // 极验验证码
 export const geetest = (params) => {
-  return http.fetchGet('/member/geetestInit?t=' + (new Date()).getTime(), params)
+  return http.fetchGet('/user/geetestInit?t=' + (new Date()).getTime(), params)
 }
 

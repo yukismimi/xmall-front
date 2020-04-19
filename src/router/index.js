@@ -33,7 +33,7 @@ export default new Router({
       path: '/',
       component: Index,
       name: 'index',
-      redirect: '/home',
+      redirect: '/goods',
       children: [
         {path: 'home', component: Home},
         {path: 'goods', component: GoodS},
