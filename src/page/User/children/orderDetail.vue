@@ -24,7 +24,7 @@
               <el-step title="交易关闭" v-bind:description="closeTime"></el-step>
             </el-steps>
           </div>
-          <div class="status-now" v-if="orderStatus === 1">
+          <div class="status-now" v-if="orderStatus === 0">
             <ul>
               <li class="status-title"><h3>订单状态：待付款</h3></li>
               <li class="button">
@@ -34,11 +34,11 @@
             </ul>
             <p class="realtime">
               <span>您的付款时间还有 </span>
-              <span class="red"><countDown v-bind:endTime="countTime" endText="已结束"></countDown></span>
+              <span class="red"><countDown :endTime="countTime" v-if="countTime !== 0" v-bind:endTime="countTime" endText="已结束"></countDown></span>
               <span>，超时后订单将自动取消。</span>
             </p>
           </div>
-          <div class="status-now" v-if="orderStatus === 2">
+          <div class="status-now" v-if="orderStatus === 1">
             <ul>
               <li class="status-title"><h3>订单状态：已支付，待系统审核确认</h3></li>
             </ul>
@@ -46,7 +46,7 @@
               <span>请耐心等待审核，审核结果将发送到您的邮箱，并且您所填写的捐赠数据将显示在捐赠表中。</span>
             </p>
           </div>
-          <div class="status-now" v-if="orderStatus === -1 || orderStatus === 6">
+          <div class="status-now" v-if="orderStatus === 4">
             <ul>
               <li class="status-title"><h3>订单状态：已关闭</h3></li>
             </ul>
@@ -54,7 +54,7 @@
               <span>您的订单已关闭。</span>
             </p>
           </div>
-          <div class="status-now" v-if="orderStatus === 5">
+          <div class="status-now" v-if="orderStatus === 3">
             <ul>
               <li class="status-title"><h3>订单状态：已完成</h3></li>
             </ul>
@@ -78,14 +78,14 @@
           <!--商品-->
           <div class="goods-table">
             <div class="cart-items" v-for="(item,i) in orderList" :key="i">
-              <a @click="goodsDetails(item.productId)" class="img-box"><img :src="item.productImg" alt=""></a>
+              <a @click="goodsDetails(item.productId)" class="img-box"><img :src="item.productPic" alt=""></a>
               <div class="name-cell ellipsis">
                 <a @click="goodsDetails(item.productId)" title="" target="_blank">{{item.productName}}</a>
               </div>
               <div class="n-b">
-                <div class="price">¥ {{Number(item.salePrice).toFixed(2)}}</div>
-                <div class="goods-num">{{item.quantity}}</div>
-                <div class="subtotal"> ¥ {{Number(item.salePrice * item.quantity).toFixed(2)}}</div>
+                <div class="price">¥ {{Number(item.productPrice).toFixed(2)}}</div>
+                <div class="goods-num">{{item.productQuantity}}</div>
+                <div class="subtotal"> ¥ {{Number(item.productPrice * item.productQuantity).toFixed(2)}}</div>
               </div>
             </div>
           </div>
@@ -156,40 +156,30 @@
         window.open(window.location.origin + '#/order/payment?orderId=' + orderId)
       },
       goodsDetails (id) {
-        window.open(window.location.origin + '#/goodsDetails?productId=' + id)
+        window.open(window.location.origin + '#/goodsDetails?id=' + id)
       },
       _getOrderDet () {
+        console.log('_getOrderDet called')
         let params = {
-          params: {
-            orderId: this.orderId
-          }
+          orderId: this.orderId
         }
         getOrderDet(params).then(res => {
-          if (res.result.orderStatus === '0') {
-            this.orderStatus = 1
-          } else if (res.result.orderStatus === '1') {
-            this.orderStatus = 2
-          } else if (res.result.orderStatus === '4') {
-            this.orderStatus = 5
-          } else if (res.result.orderStatus === '5') {
-            this.orderStatus = -1
-          } else if (res.result.orderStatus === '6') {
-            this.orderStatus = 6
-          }
-          this.orderList = res.result.goodsList
-          this.orderTotal = res.result.orderTotal
-          this.userName = res.result.addressInfo.userName
-          this.tel = res.result.addressInfo.tel
-          this.streetName = res.result.addressInfo.streetName
-          this.createTime = res.result.createDate
-          this.closeTime = res.result.closeDate
-          this.payTime = res.result.payDate
-          if (this.orderStatus === 5) {
-            this.finishTime = res.result.finishDate
+          this.orderStatus = res.data.status
+          this.orderList = res.data.orderItemList
+          this.orderTotal = res.data.totalAmount
+          this.userName = res.data.receiverName
+          this.tel = res.data.receiverPhone
+          this.streetName = res.data.receiverProvince + ' ' + res.data.receiverCity + ' ' + res.data.receiverRegion + ' ' + res.data.receiverDetailAddress
+          this.createTime = res.data.createTime
+          this.closeTime = res.data.createTime
+          this.payTime = res.data.paymentTime
+          if (this.orderStatus !== 0) {
+            this.finishTime = res.data.createTime
           } else {
-            this.countTime = res.result.finishDate
+            this.countTime = 1587355772000
           }
           this.loading = false
+          console.log('_getOrderDet get data')
         })
       },
       _cancelOrder () {
@@ -203,6 +193,7 @@
       }
     },
     created () {
+      console.log('parent component created')
       this.userId = getStore('userId')
       this.orderId = this.$route.query.orderId
       this.orderTitle = '订单号：' + this.orderId

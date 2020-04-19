@@ -34,7 +34,7 @@
         </div>
         <div class="buy">
           <y-button text="加入购物车"
-                    @btnClick="addCart(product.id,product.price,product.name,product.pic)"
+                    @btnClick="addCart(product.id,product.addCart,product.price,product.name,product.pic)"
                     classStyle="main-btn"
                     style="width: 145px;height: 50px;line-height: 48px"></y-button>
           <y-button text="现在购买"
@@ -94,10 +94,10 @@
           // this.big = result.pic
         })
       },
-      addCart (id, price, name, img) {
+      addCart (id, productSkuId, price, name, img) {
         if (!this.showMoveImg) {     // 动画是否在运动
           if (this.login) { // 登录了 直接存在用户名下
-            addCart({userId: this.userId, id: id, quantity: this.quantity}).then(res => {
+            addCart({id: id, productSkuId: productSkuId, quantity: this.quantity}).then(res => {
               // 并不重新请求数据
               this.ADD_CART({
                 id: id,

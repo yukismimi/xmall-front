@@ -14,8 +14,8 @@ export default {
   },
   props: {
     endTime: {
-      type: String,
-      default: ''
+      type: Number,
+      default: 0
     },
     endText: {
       type: String,
@@ -28,10 +28,13 @@ export default {
   },
   methods: {
     countdowm (timestamp) {
+      console.log('countdown called')
       let self = this
       let timer = setInterval(function () {
         let nowTime = new Date()
         let t = timestamp - nowTime.getTime()
+        console.log('timestamp:' + timestamp)
+        console.log('nowTime:' + nowTime.getTime())
         if (t > 0) {
           let day = Math.floor(t / 86400000)
           let hour = Math.floor((t / 3600000) % 24)
@@ -51,6 +54,7 @@ export default {
             format = `${min} 分 ${sec} 秒`
           }
           self.content = format
+          // console.log('self.content:')
         } else {
           clearInterval(timer)
           self.content = self.endText
@@ -65,10 +69,12 @@ export default {
     }
   },
   mounted () {
+    console.log('child component mounted')
     this.countdowm(this.endTime)
+    console.log('countDown finished')
   }
 }
 </script>
 <style lang='scss' rel='stylesheet/scss' scoped>
-  
+
 </style>

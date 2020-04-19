@@ -112,7 +112,7 @@
         this.$router.push({
           path: 'orderDetail',
           query: {
-            id: id
+            orderId: id
           }
         })
       },

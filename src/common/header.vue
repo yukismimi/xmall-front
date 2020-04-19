@@ -152,7 +152,8 @@
   import YButton from '/components/YButton'
   import { mapMutations, mapState } from 'vuex'
   import { getCartList, cartDel, getQuickSearch } from '/api/goods'
-  import { loginOut, navList } from '/api/index'
+  import { navList } from '/api/index'
+  // import { loginOut, navList } from '/api/index'
   import { setStore, getStore, removeStore } from '/utils/storage'
   // import store from '../store/'
   import 'element-ui/lib/theme-default/index.css'
@@ -337,15 +338,19 @@
       },
       // 退出登陆
       _loginOut () {
-        let params = {
-          params: {
-            token: this.token
-          }
-        }
-        loginOut(params).then(res => {
-          removeStore('buyCart')
-          window.location.href = '/'
-        })
+        // let params = {
+        //   params: {
+        //     token: this.token
+        //   }
+        // }
+        removeStore('buyCart')
+        removeStore('token')
+        removeStore('userInfo')
+        window.location.href = '/'
+        // loginOut(params).then(res => {
+        //   removeStore('buyCart')
+        //   window.location.href = '/'
+        // })
       },
       // 通过路由改变导航文字样式
       getPage () {
@@ -360,7 +365,7 @@
         }
       },
       openProduct (productId) {
-        window.open('//' + window.location.host + '/#/goodsDetails?productId=' + productId)
+        window.open('//' + window.location.host + '/#/goodsDetails?id=' + productId)
       },
       _getNavList () {
         navList().then(res => {

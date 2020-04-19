@@ -41,6 +41,8 @@ router.beforeEach(function (to, from, next) {
   let token = getStore('token')
   if (token !== null) {
     console.log('token !== null')
+    console.log(JSON.parse(getStore('userInfo') || '{}'))
+    store.commit('RECORD_USERINFO', {info: JSON.parse(getStore('userInfo') || '{}')})
     next()
   } else {
     if (whiteList.indexOf(to.path) !== -1) { // 白名单
