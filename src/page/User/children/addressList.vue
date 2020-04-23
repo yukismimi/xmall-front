@@ -20,7 +20,7 @@
             </div>
             <div class="operation">
               <el-button type="primary" icon="edit" size="small"  @click="update(item)"></el-button>
-              <el-button type="danger" icon="delete" size="small" :data-id="item.addressId" @click="del(item.addressId,i)"></el-button>
+              <el-button type="danger" icon="delete" size="small" :data-id="item.id" @click="del(item.id,i)"></el-button>
             </div>
           </div>
         </div>
@@ -35,7 +35,7 @@
       </div>
     </y-shelf>
     <y-popup :open="popupOpen" @close='popupOpen=false' :title="popupTitle">
-      <div slot="content" class="md" :data-id="msg.addressId">
+      <div slot="content" class="md" :data-id="msg.id">
         <div>
           <input type="text" placeholder="收货人姓名" v-model="msg.userName">
         </div>
@@ -51,7 +51,7 @@
         <y-button text='保存'
                   class="btn"
                   :classStyle="btnHighlight?'main-btn':'disabled-btn'"
-                  @btnClick="save({userId:userId,addressId:msg.addressId,userName:msg.userName,tel:msg.tel,streetName:msg.streetName,isDefault:msg.isDefault})">
+                  @btnClick="save({userId:userId,id:msg.id,userName:msg.userName,tel:msg.tel,streetName:msg.streetName,isDefault:msg.isDefault})">
         </y-button>
       </div>
     </y-popup>
@@ -70,7 +70,7 @@
         popupOpen: false,
         popupTitle: '管理收货地址',
         msg: {
-          addressId: '',
+          id: '',
           userName: '',
           tel: '',
           streetName: '',
@@ -96,7 +96,7 @@
           let data = res.data
           if (data.length) {
             this.addList = res.data
-            this.addressId = res.data[0].id || '1'
+            this.id = res.data[0].id || '1'
           } else {
             this.addList = []
           }
@@ -126,16 +126,16 @@
       // 保存
       save (p) {
         this.popupOpen = false
-        if (p.addressId) {
+        if (p.id) {
           this._addressUpdate(p)
         } else {
-          delete p.addressId
+          delete p.id
           this._addressAdd(p)
         }
       },
       // 删除
-      del (addressId, i) {
-        addressDel({addressId: addressId}).then(res => {
+      del (id, i) {
+        addressDel({id: id}).then(res => {
           if (res.success === true) {
             this.addList.splice(i, 1)
           } else {
@@ -152,14 +152,14 @@
           this.msg.tel = item.tel
           this.msg.streetName = item.streetName
           this.msg.isDefault = item.isDefault
-          this.msg.addressId = item.addressId
+          this.msg.id = item.id
         } else {
           this.popupTitle = '新增收货地址'
           this.msg.userName = ''
           this.msg.tel = ''
           this.msg.streetName = ''
           this.msg.isDefault = false
-          this.msg.addressId = ''
+          this.msg.id = ''
         }
       }
     },
