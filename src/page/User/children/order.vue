@@ -48,6 +48,7 @@
                   <el-button @click="orderPayment(item.id)" type="primary" size="small">现在付款</el-button>
                 </div>
                 <div class="status" v-if="item.status !== 0"> {{getOrderStatus(item.status)}}  </div>
+<!--                <div class="status"> {{getOrderStatus(item.status)}}  </div>-->
               </div>
             </div>
           </div>
@@ -117,32 +118,29 @@
         })
       },
       getOrderStatus (status) {
-        if (status === '1') {
+        if (status === 0) {
           return '待付款'
-        } else if (status === '2') {
+        } else if (status === 1) {
           return '待发货'
-        } else if (status === '3') {
+        } else if (status === 2) {
           return '已发货'
-        } else if (status === '4') {
+        } else if (status === 3) {
           return '交易成功'
-        } else if (status === '5') {
+        } else if (status === 4) {
           return '交易关闭'
-        } else if (status === '6') {
+        } else if (status === 5) {
           return '支付失败'
         }
       },
       _orderList () {
-        // let params = {
-        //   // params: {
-        //   //   userId: this.userId,
-        //   //   size: this.pageSize,
-        //   //   page: this.currentPage
-        //   // }
-        // }
+        let params = {
+          page: this.currentPage,
+          size: this.pageSize
+        }
         console.log('test')
-        orderList().then(res => {
-          this.orderList = res.data
-          this.total = res.data.length
+        orderList(params).then(res => {
+          this.orderList = res.data.content
+          this.total = res.data.totalElements
           this.loading = false
         })
       },

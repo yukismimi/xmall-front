@@ -42,7 +42,8 @@
               <span>
                 实际应付金额：
               </span>
-              <em><span>¥</span>{{money}}</em>
+              <em><span>¥</span>{{orderTotal.toFixed(2)}}</em>
+<!--              <em><span>¥</span>{{money}}</em>-->
               <y-button :text="payNow"
                         :classStyle="submit?'main-btn':'disabled-btn'"
                         style="width: 120px;height: 40px;font-size: 16px;line-height: 38px"
@@ -99,8 +100,10 @@
 <script>
   import YShelf from '/components/shelf'
   import YButton from '/components/YButton'
-  import { getOrderDet, payMent } from '/api/goods'
-  import { getStore, setStore } from '/utils/storage'
+  // import { getOrderDet, payMent } from '/api/goods'
+  import { getOrderDet } from '/api/goods'
+  // import { getStore, setStore } from '/utils/storage'
+  import { getStore } from '/utils/storage'
   export default {
     data () {
       return {
@@ -184,10 +187,14 @@
         })
       },
       paySuc () {
-        this.payNow = '支付中...'
-        this.submit = false
+        // this.$router.push({path: 'http://www.baidu.com'})
+        // this.payNow = '支付中...'
+        // this.submit = false
         if (this.payType === 1) {
           this.type = 'Alipay'
+          // window.open('http://localhost:8088/alipay/pay?orderId=' + this.orderId, '_self')
+          window.open(window.location.origin + '#/order/alipay?orderId=' + this.orderId, '_self')
+          this.payNow = '支付中...'
         } else if (this.payType === 2) {
           this.type = 'Wechat'
         } else if (this.payType === 3) {
@@ -195,34 +202,34 @@
         } else {
           this.type = '其它'
         }
-        payMent({
-          nickName: this.nickName,
-          money: this.money,
-          info: this.info,
-          email: this.email,
-          orderId: this.orderId,
-          userId: this.userId,
-          payType: this.type
-        }).then(res => {
-          if (res.success === true) {
-            setStore('setTime', 90)
-            setStore('price', this.money)
-            setStore('isCustom', this.isCustom)
-            if (this.payType === 1) {
-              this.$router.push({path: '/order/alipay'})
-            } else if (this.payType === 2) {
-              this.$router.push({path: '/order/wechat'})
-            } else if (this.payType === 3) {
-              this.$router.push({path: '/order/qqpay'})
-            } else {
-              this.$router.push({path: '/order/alipay'})
-            }
-          } else {
-            this.payNow = '立刻支付'
-            this.submit = true
-            this.messageFail(res.message)
-          }
-        })
+        // payMent({
+        //   nickName: this.nickName,
+        //   money: this.money,
+        //   info: this.info,
+        //   email: this.email,
+        //   orderId: this.orderId,
+        //   userId: this.userId,
+        //   payType: this.type
+        // }).then(res => {
+        //   if (res.success === true) {
+        //     setStore('setTime', 90)
+        //     setStore('price', this.money)
+        //     setStore('isCustom', this.isCustom)
+        //     if (this.payType === 1) {
+        //       this.$router.push({path: '/order/alipay'})
+        //     } else if (this.payType === 2) {
+        //       this.$router.push({path: '/order/wechat'})
+        //     } else if (this.payType === 3) {
+        //       this.$router.push({path: '/order/qqpay'})
+        //     } else {
+        //       this.$router.push({path: '/order/alipay'})
+        //     }
+        //   } else {
+        //     this.payNow = '立刻支付'
+        //     this.submit = true
+        //     this.messageFail(res.message)
+        //   }
+        // })
       },
       isMoney (v) {
         if (v < 0.1) {
@@ -249,6 +256,7 @@
     created () {
       this.userId = getStore('userId')
       this.orderId = this.$route.query.id
+      console.log('payment.vue' || this.orderId)
       if (this.orderId) {
         this._getOrderDet(this.orderId)
       } else {

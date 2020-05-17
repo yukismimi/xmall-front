@@ -5,18 +5,18 @@
       <div slot="content">
         <!--标题-->
         <div class="table-title">
-          <span class="name">姓名</span> <span class="address">详细地址</span> <span class="tel">电话</span>
+          <span class="name">姓名</span> <span class="address">详细地址</span> <span class="phoneNumber">电话</span>
         </div>
         <div v-if="addList.length">
           <div class="address-item" v-for="(item,i) in addList" :key="i">
             <div class="name">{{item.name}}</div>
-            <div class="address-msg">{{item.province + ' ' + item.city + ' ' + item.region + ' ' + item.detailAddress}}</div>
-            <div class="telephone">{{item.phoneNumber}}</div>
+            <div class="address-msg">{{address(item)}}</div>
+            <div class="phoneNumberephone">{{item.phoneNumber}}</div>
             <div class="defalut">
               <a @click="changeDef(item)"
                  href="javascript:;"
                  v-text="item.defaultStatus === 1 ?'( 默认地址 )':'设为默认'"
-                 :class="{'defalut-address':item.isDefault}"></a>
+                 :class="{'defalut-address':item.defaultStatus == 1}"></a>
             </div>
             <div class="operation">
               <el-button type="primary" icon="edit" size="small"  @click="update(item)"></el-button>
@@ -37,21 +37,32 @@
     <y-popup :open="popupOpen" @close='popupOpen=false' :title="popupTitle">
       <div slot="content" class="md" :data-id="msg.id">
         <div>
-          <input type="text" placeholder="收货人姓名" v-model="msg.userName">
+          <input type="text" placeholder="收货人姓名" v-model="msg.name">
         </div>
         <div>
-          <input type="number" placeholder="手机号码" v-model="msg.tel">
+          <input type="number" placeholder="手机号码" v-model="msg.phoneNumber">
         </div>
         <div>
-          <input type="text" placeholder="收货地址" v-model="msg.streetName">
+          <input type="text" placeholder="省份" v-model="msg.province">
         </div>
         <div>
-          <el-checkbox class="auto-login" v-model="msg.isDefault">设为默认</el-checkbox>
+          <input type="text" placeholder="市" v-model="msg.city">
+        </div>
+        <div>
+          <input type="text" placeholder="区/县" v-model="msg.region">
+        </div>
+        <div>
+          <input type="text" placeholder="详细地址" v-model="msg.detailAddress">
+        </div>
+        <div>
+          <el-checkbox class="auto-login" v-model="msg.defaultStatus">设为默认</el-checkbox>
         </div>
         <y-button text='保存'
                   class="btn"
                   :classStyle="btnHighlight?'main-btn':'disabled-btn'"
-                  @btnClick="save({userId:userId,id:msg.id,userName:msg.userName,tel:msg.tel,streetName:msg.streetName,isDefault:msg.isDefault})">
+                  @btnClick="save({id:msg.id,name:msg.name,phoneNumber:msg.phoneNumber,
+                  province:msg.province,city:msg.city,region:msg.region,detailAddress:msg.detailAddress,
+                  defaultStatus:msg.defaultStatus ? 1 : 0})">
         </y-button>
       </div>
     </y-popup>
@@ -71,10 +82,14 @@
         popupTitle: '管理收货地址',
         msg: {
           id: '',
-          userName: '',
-          tel: '',
-          streetName: '',
-          isDefault: false
+          name: '',
+          phoneNumber: '',
+          province: '',
+          city: '',
+          region: '',
+          detailAddress: '',
+          // streetName: '',
+          defaultStatus: false
         },
         userId: ''
       }
@@ -82,7 +97,12 @@
     computed: {
       btnHighlight () {
         let msg = this.msg
-        return msg.userName && msg.tel && msg.streetName
+        return msg.name && msg.phoneNumber && msg.province && msg.city && msg.region && msg.detailAddress
+      },
+      address () {
+        return function (item) {
+          return item.province + ' ' + item.city + ' ' + item.region + ' ' + item.detailAddress
+        }
       }
     },
     methods: {
@@ -109,7 +129,7 @@
       },
       _addressAdd (params) {
         addressAdd(params).then(res => {
-          if (res.success === true) {
+          if (res.code === 200) {
             this._addressList()
           } else {
             this.message(res.message)
@@ -117,8 +137,8 @@
         })
       },
       changeDef (item) {
-        if (!item.isDefault) {
-          item.isDefault = true
+        if (!item.defaultStatus) {
+          item.defaultStatus = true
           this._addressUpdate(item)
         }
         return false
@@ -136,7 +156,7 @@
       // 删除
       del (id, i) {
         addressDel({id: id}).then(res => {
-          if (res.success === true) {
+          if (res.code === 200) {
             this.addList.splice(i, 1)
           } else {
             this.message('删除失败')
@@ -148,17 +168,24 @@
         this.popupOpen = true
         if (item) {
           this.popupTitle = '管理收货地址'
-          this.msg.userName = item.userName
-          this.msg.tel = item.tel
-          this.msg.streetName = item.streetName
-          this.msg.isDefault = item.isDefault
+          this.msg.name = item.name
+          this.msg.phoneNumber = item.phoneNumber
+          this.msg.province = item.province
+          this.msg.city = item.city
+          this.msg.region = item.region
+          this.msg.detailAddress = item.detailAddress
+          this.msg.defaultStatus = item.defaultStatus === 1
           this.msg.id = item.id
         } else {
           this.popupTitle = '新增收货地址'
-          this.msg.userName = ''
-          this.msg.tel = ''
-          this.msg.streetName = ''
-          this.msg.isDefault = false
+          this.msg.name = ''
+          this.msg.phoneNumber = ''
+          this.msg.province = ''
+          this.msg.city = ''
+          this.msg.region = ''
+          this.msg.detailAddress = ''
+          // this.msg.streetName = ''
+          this.msg.defaultStatus = false
           this.msg.id = ''
         }
       }
@@ -198,7 +225,7 @@
     .address {
       margin-left: 115px;
     }
-    .tel {
+    .phoneNumber {
       margin-left: 195px;
     }
   }
@@ -214,7 +241,7 @@
     .address-msg {
       flex: 1;
     }
-    .telephone {
+    .phoneNumberephone {
       width: 160px;
     }
     .defalut {

@@ -22,7 +22,7 @@
                 @keydown.enter.native="handleIconClick">
               </el-autocomplete>
               <router-link to="/goods"><a @click="changePage(2)">全部商品</a></router-link>
-              <router-link to="/thanks"><a @click="changePage(4)">捐赠</a></router-link>
+<!--              <router-link to="/thanks"><a @click="changePage(4)">捐赠</a></router-link>-->
               <!-- <router-link to="/">Smartisan M1 / M1L</router-link>
               <router-link to="/">Smartisan OS</router-link>
               <router-link to="/">欢喜云</router-link>
@@ -40,8 +40,8 @@
                       <!--头像-->
                       <li class="nav-user-avatar">
                         <div>
-<!--                          <span class="avatar" :style="{backgroundImage:'url('+JSON.parse(userInfo).avatar+')'}">-->
-<!--                          </span>-->
+                          <span class="avatar" :style="{backgroundImage:'url('+this.userInfo.avatar+')'}">
+                          </span>
                         </div>
 <!--                        <p class="name">{{JSON.parse(userInfo).username}}</p>-->
                       </li>
@@ -130,9 +130,9 @@
           <div class="nav-sub-wrapper" :class="{fixed:st}">
             <div class="w">
               <ul class="nav-list2">
-                <li>
-                  <router-link to="/"><a @click="changGoods(-1)" :class="{active:choosePage===-1}">首页</a></router-link>
-                </li>
+<!--                <li>-->
+<!--                  <router-link to="/"><a @click="changGoods(-1)" :class="{active:choosePage===-1}">首页</a></router-link>-->
+<!--                </li>-->
                 <li>
                   <a @click="changGoods(-2)" :class="{active:choosePage===-2}">全部</a>
                 </li>
@@ -312,11 +312,11 @@
       // 删除商品
       delGoods (productId) {
         if (this.login) { // 登陆了
-          cartDel({userId: getStore('userId'), productId}).then(res => {
-            this.EDIT_CART({productId})
+          cartDel({id: productId}).then(res => {
+            this.EDIT_CART({id: productId})
           })
         } else {
-          this.EDIT_CART({productId})
+          this.EDIT_CART({id: productId})
         }
       },
       toCart () {
@@ -393,6 +393,7 @@
       console.log(this.cartList)
       console.log(this.receiveInCart)
       console.log(this.showCart)
+      console.log(this.userInfo.avatar)
     },
     components: {
       YButton

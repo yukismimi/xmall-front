@@ -30,5 +30,32 @@ export default {
         reject(error)
       })
     })
+  },
+  fetchPut (url, params = {}) {
+    return new Promise((resolve, reject) => {
+      axios.put(url, params, {
+        headers: {
+          'token': getStore('token') !== null ? getStore('token') : ''
+        }
+      }).then(res => {
+        resolve(res.data)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+  fetchDelete (url, params = {}) {
+    return new Promise((resolve, reject) => {
+      axios.delete(url, {
+        params: params,
+        headers: {
+          'token': getStore('token') !== null ? getStore('token') : ''
+        }
+      }).then(res => {
+        resolve(res.data)
+      }).catch(error => {
+        reject(error)
+      })
+    })
   }
 }

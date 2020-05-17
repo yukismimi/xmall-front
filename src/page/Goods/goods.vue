@@ -81,7 +81,7 @@
         windowHeight: null,
         windowWidth: null,
         recommendPanel: [],
-        sort: '',
+        sort: 0,
         currentPage: 1,
         total: 0,
         pageSize: 20
@@ -107,19 +107,17 @@
           this.max = Math.floor(this.max)
         }
         let params = {
-          params: {
-            page: this.currentPage,
-            size: this.pageSize,
-            sort: this.sort,
-            priceGt: this.min,
-            priceLte: this.max,
-            cid: cid
-          }
+          page: this.currentPage,
+          size: this.pageSize,
+          sort: this.sort,
+          min: this.min,
+          max: this.max,
+          cid: cid
         }
         getAllGoods(params).then(res => {
           if (res.code === 200) {
-            this.total = res.data.length
-            this.goods = res.data
+            this.total = res.data.totalElements
+            this.goods = res.data.content
             this.noResult = false
             if (this.total === 0) {
               this.noResult = true
@@ -134,7 +132,7 @@
       // 默认排序
       reset () {
         this.sortType = 1
-        this.sort = ''
+        this.sort = 0
         this.currentPage = 1
         this.loading = true
         this._getAllGoods()

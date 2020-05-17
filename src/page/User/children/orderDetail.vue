@@ -3,16 +3,16 @@
     <y-shelf v-bind:title="orderTitle">
       <div slot="content">
         <div v-loading="loading" element-loading-text="加载中..." style="min-height: 10vw;" v-if="orderList.length">
-          <div class="orderStatus" v-if="orderStatus !== -1 && orderStatus !== 6">
-            <el-steps :space="200" :active="orderStatus">
+          <div class="orderStatus" v-if="orderStatus !== 4 && orderStatus !== 6">
+            <el-steps :space="200" :active="orderStatus + 1">
               <el-step title="下单" v-bind:description="createTime"></el-step>
               <el-step title="付款" v-bind:description="payTime"></el-step>
               <el-step title="配货" description=""></el-step>
               <el-step title="出库" description=""></el-step>
-              <el-step title="交易成功" v-bind:description="finishTime"></el-step>
+              <el-step title="完成" v-bind:description="finishTime"></el-step>
             </el-steps>
           </div>
-          <div class="orderStatus-close" v-if="orderStatus === -1">
+          <div class="orderStatus-close" v-if="orderStatus === 4">
             <el-steps :space="780" :active="2">
               <el-step title="下单" v-bind:description="createTime"></el-step>
               <el-step title="交易关闭" v-bind:description="closeTime"></el-step>
@@ -171,13 +171,16 @@
           this.tel = res.data.receiverPhone
           this.streetName = res.data.receiverProvince + ' ' + res.data.receiverCity + ' ' + res.data.receiverRegion + ' ' + res.data.receiverDetailAddress
           this.createTime = res.data.createTime
-          this.closeTime = res.data.createTime
+          this.closeTime = res.data.commentTime
           this.payTime = res.data.paymentTime
-          if (this.orderStatus !== 0) {
-            this.finishTime = res.data.createTime
-          } else {
-            this.countTime = 1587355772000
+          if (this.orderStatus === 0) {
+            this.countTime = this.createTime
           }
+          // if (this.orderStatus !== 0) {
+          //   this.finishTime = res.data.createTime
+          // } else {
+          //   this.countTime = 1587355772000
+          // }
           this.loading = false
           console.log('_getOrderDet get data')
         })

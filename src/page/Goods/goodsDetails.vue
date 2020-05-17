@@ -129,7 +129,8 @@
         }
       },
       checkout (id) {
-        this.$router.push({path: '/checkout', query: {id, num: this.quantity}})
+        // 暂时先不加这个功能
+        // this.$router.push({path: '/checkout', query: {productId: id, num: this.quantity}})
       },
       editNum (num) {
         this.quantity = num

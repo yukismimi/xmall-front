@@ -17,19 +17,19 @@ export const delCart = (params) => {
 }
 // 删除购物车勾选商品
 export const delCartChecked = (params) => {
-  return http.fetchPost('/user/delCartChecked', params)
+  return http.fetchDelete('/cart/deleteChecked', params)
 }
 // 编辑购物车
 export const cartEdit = (params) => {
-  return http.fetchPost('/user/cartEdit', params)
+  return http.fetchPut('/cart/modify', params)
 }
 // 全选
 export const editCheckAll = (params) => {
-  return http.fetchPost('/user/editCheckAll', params)
+  return http.fetchPut('/cart/editCheckAll', params)
 }
 // 删除整条购物车
 export const cartDel = (params) => {
-  return http.fetchPost('/user/cartDel', params)
+  return http.fetchDelete('/cart/delete', params)
 }
 // 获取用户地址
 export const addressList = () => {
@@ -41,7 +41,7 @@ export const getAddress = (params) => {
 }
 // 修改收货地址
 export const addressUpdate = (params) => {
-  return http.fetchPost('/user/updateAddress', params)
+  return http.fetchPut('/address/modify', params)
 }
 // 添加收货地址
 export const addressAdd = (params) => {
@@ -49,19 +49,27 @@ export const addressAdd = (params) => {
 }
 // 删除收货地址
 export const addressDel = (params) => {
-  return http.fetchGet('/address/delete', params)
+  return http.fetchDelete('/address/delete', params)
 }
 // 生成订单
 export const submitOrder = (params) => {
-  return http.fetchPost('/user/addOrder', params)
+  return http.fetchPost('/order/add', params)
 }
 // 支付
 export const payMent = (params) => {
   return http.fetchPost('/user/payOrder', params)
 }
+// 支付宝支付
+export const pay = (params) => {
+  return http.fetchGet('/alipay/pay', params)
+}
+// 支付宝支付成功
+export const paySuccess = (params) => {
+  return http.fetchPost('/order/paySuccess', params)
+}
 // 获取用户订单
-export const orderList = () => {
-  return http.fetchGet('/order/all')
+export const orderList = (params) => {
+  return http.fetchGet('/order/all', params)
 }
 // 获取单个订单详情
 export const getOrderDet = (params) => {

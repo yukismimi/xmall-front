@@ -2,7 +2,7 @@
   <div class="w">
     <y-shelf title="支付成功" style="text-align: center">
       <div slot="content" class="content">
-        <p><i class="el-icon-circle-check icon-success"></i> 恭喜您支付成功，请等待5-30分钟系统确认<br>总共花费 <span class="price"><em style="font-size: 18px">¥</em>{{price}}</span> 元</p>
+        <p><i class="el-icon-circle-check icon-success"></i> 恭喜您支付成功，请等待5-30分钟系统确认<br>总共花费 <span class="price"><em style="font-size: 18px">¥</em>{{totalAmount}}</span> 元</p>
         <div style="margin-top: 20px;">
           <router-link to="/user">
             <y-button text="查看订单" style="width: 150px;height: 50px;line-height: 48px;font-size: 20px"
@@ -22,10 +22,13 @@
 <script>
   import YShelf from '/components/shelf'
   import YButton from '/components/YButton'
+  import { paySuccess } from '/api/goods.js'
   export default {
     data () {
       return {
-        price: 10
+        price: 10,
+        orderId: '',
+        totalAmount: ''
       }
     },
     components: {
@@ -34,6 +37,15 @@
     },
     created () {
       this.price = this.$route.query.price
+      this.orderId = this.$route.query.out_trade_no
+      this.totalAmount = this.$route.query.total_amount
+      let params = {
+        orderId: this.orderId,
+        totalAmount: this.totalAmount
+      }
+      paySuccess(params).then(res => {
+
+      })
     }
   }
 </script>

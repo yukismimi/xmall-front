@@ -28,7 +28,7 @@
   import YButton from '/components/YButton'
   import { addCart } from '/api/goods.js'
   import { mapMutations, mapState } from 'vuex'
-  import { getStore } from '/utils/storage'
+  // import { getStore } from '/utils/storage'
   export default {
     props: {
       msg: {
@@ -49,12 +49,16 @@
       addCart (id, price, name, img) {
         if (!this.showMoveImg) {     // 动画是否在运动
           if (this.login) { // 登录了 直接存在用户名下
-            addCart({userId: getStore('userId'), id: id, quantity: 1}).then(res => {
+            addCart({id: id, productSkuId: id, quantity: 1}).then(res => {
               // 并不重新请求数据
-              this.ADD_CART({id: id, price: price, name: name, productImg: img})
+              console.log(id)
+              console.log(price)
+              console.log(name)
+              console.log(img)
+              this.ADD_CART({id: id, price: price, productName: name, productPic: img})
             })
           } else { // 未登录 vuex
-            this.ADD_CART({id: id, price: price, name: name, productImg: img})
+            this.ADD_CART({id: id, price: price, productName: name, productPic: img})
           }
           // 加入购物车动画
           var dom = event.target

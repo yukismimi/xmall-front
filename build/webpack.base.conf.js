@@ -36,7 +36,7 @@ module.exports = {
       '/api': resolve('src/api'),
       '/utils': resolve('src/utils')
     }
-  },
+  } ,
   module: {
     rules: [
       {

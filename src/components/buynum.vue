@@ -32,7 +32,7 @@
         type: [Number, String]
       },
       checked: {
-        type: [String, Boolean]
+        type: [String, Number]
       },
       limit: {
         type: Number,
@@ -63,7 +63,7 @@
       },
       blur () {
         this.Num = this.Num > this.limit ? Number(this.limit) : Number(this.Num)
-        this.$emit('edit-num', this.Num, this.id, this.checked)
+        this.$emit('edit-num', this.id, this.Num, this.checked)
       },
       ani (opera) {
         this.flag = false

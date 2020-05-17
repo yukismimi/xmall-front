@@ -22,7 +22,7 @@
                     <div class="cart-items clearfix">
                       <!--勾选-->
                       <div class="items-choose">
-                      <span class="blue-checkbox-new " :class="{'checkbox-on':item.checked === '1'}"
+                      <span class="blue-checkbox-new " :class="{'checkbox-on':item.checked === 1}"
                             @click="editCart('check',item)"></span>
                       </div>
                       <!--图片-->
@@ -51,7 +51,7 @@
                         <div class="subtotal" style="font-size: 14px">¥ {{item.price * item.quantity}}</div>
                         <!--数量-->
                         <buy-num :num="item.quantity"
-                                 :id="item.productId"
+                                 :id="item.id"
                                  :checked="item.checked"
                                  style="height: 140px;
                                    display: flex;
@@ -144,7 +144,7 @@
       checkedCount () {
         var i = 0
         this.cartList && this.cartList.forEach((item) => {
-          if (item.checked === '1') i++
+          if (item.checked === 1) i++
         })
         return Number(i)
       },
@@ -160,8 +160,8 @@
       checkPrice () {
         var totalPrice = 0
         this.cartList && this.cartList.forEach(item => {
-          if (item.checked === '1') {
-            totalPrice += (item.quantity * item.salePrice)
+          if (item.checked === 1) {
+            totalPrice += (item.quantity * item.price)
           }
         })
         return totalPrice
@@ -170,7 +170,7 @@
       checkNum () {
         var checkNum = 0
         this.cartList && this.cartList.forEach(item => {
-          if (item.checked === '1') {
+          if (item.checked === 1) {
             checkNum += (item.quantity)
           }
         })
@@ -192,26 +192,25 @@
       // 全选
       editCheckAll () {
         let checkAll = !this.checkAllFlag
-        editCheckAll({userId: this.userId, checked: checkAll}).then(res => {
+        editCheckAll({checked: checkAll}).then(res => {
           this.EDIT_CART({checked: checkAll})
         })
       },
       // 修改购物车
-      _cartEdit (userId, productId, quantity, checked) {
+      _cartEdit (id, quantity, checked) {
         cartEdit(
           {
-            userId,
-            productId,
+            id,
             quantity,
             checked
           }
         ).then(res => {
-          if (res.success === true) {
+          if (res.code === 200) {
             this.EDIT_CART(
               {
-                productId,
-                checked,
-                quantity
+                id,
+                quantity,
+                checked
               }
             )
           }
@@ -221,24 +220,24 @@
       editCart (type, item) {
         if (type && item) {
           let checked = item.checked
-          let productId = item.productId
+          let id = item.id
           let quantity = item.quantity
           // 勾选
           if (type === 'check') {
-            let newChecked = checked === '1' ? '0' : '1'
-            this._cartEdit(this.userId, productId, quantity, newChecked)
+            let newChecked = checked === 1 ? 0 : 1
+            this._cartEdit(id, quantity, newChecked)
           }
         } else {
           console.log('缺少所需参数')
         }
       },
-      EditNum (quantity, productId, checked) { // 数量
-        this._cartEdit(this.userId, productId, quantity, checked)
+      EditNum (id, quantity, checked) { // 数量
+        this._cartEdit(id, quantity, checked)
       },
       // 删除整条购物车
-      cartdel (productId) {
-        cartDel({userId: this.userId, productId}).then(res => {
-          this.EDIT_CART({productId})
+      cartdel (id) {
+        cartDel({id: id}).then(res => {
+          this.EDIT_CART({id})
         })
       },
       checkout () {
@@ -247,18 +246,20 @@
         this.$router.push({path: 'checkout'})
       },
       delChecked () {
-        getCartList({userId: getStore('userId')}).then(res => {
-          if (res.success === true) {
-            res.result.forEach(item => {
-              if (item.checked === '1') {
-                let productId = item.productId
-                this.EDIT_CART({productId})
+        getCartList().then(res => {
+          if (res.code === 200) {
+            res.data.forEach(item => {
+              if (item.checked === 1) {
+                let id = item.id
+                this.EDIT_CART({id})
               }
             })
           }
         })
-        delCartChecked({userId: this.userId}).then(res => {
-          if (res.success !== true) {
+        delCartChecked().then(res => {
+          if (res.code === 200) {
+
+          } else {
             this.message('删除失败')
           }
         })
